@@ -1,31 +1,9 @@
 class Point {
   constructor(public x:number = 0, public y:number = 0) {}
 }
-
 class Rectangle {
   constructor(public start: Point, public end: Point){}
-
-  public intersects(rect: Rectangle): boolean {
-    // http://stackoverflow.com/a/306332
-    return this.start.x <= rect.end.x && this.end.x >= rect.start.x &&
-           this.start.y <= rect.end.y && this.end.y >= rect.start.y;
-  }
-
-  // A stupid O(n) algorithm for finding intersecting rectangles.
-  // NOTE: If this is too slow, switch to a KD-Tree.
-  public static GetIntersectingRects(sourceRect:Rectangle, rects:Rectangle[]): Rectangle[] {
-    var rv:Rectangle[] = [];
-    for (var i = 0; i < rects.length; i++) {
-      var rect = rects[i];
-      if (sourceRect.intersects(rect)) {
-        rv.push(rect);
-      }
-    }
-    return rv;
-  }
 }
-
-var buckets: {[prop: string]: number} = {};
 
 // Wraps a HTMLCanvasElement for the SuperCanvas.
 class CanvasWrap extends Rectangle {
@@ -55,12 +33,10 @@ class Wrap2DContext {
         continue;
       }
 
-      buckets[prop] = 0;
       if (typeof ctx[prop] === 'function') {
         // Need to create a closure to capture the value of 'prop'.
         this[prop] = (function(prop) {
           return function() {
-            buckets[prop]++;
             // Proxy the function call.
             var rv = that.ctx[prop].apply(that.ctx, arguments);
             // Update the super canvas.
@@ -71,18 +47,18 @@ class Wrap2DContext {
       } else {
         // Create a closure to capture 'prop'.
         (function(prop) {
-		  Object.defineProperty(that, prop, {
-		    set: function (val) {
-				buckets[prop]++;
-				// Proxy the property update.
-				that.ctx[prop] = val;
-				// Update the super canvas.
-				that.scheduleUpdate();
-			  },
+          Object.defineProperty(that, prop, {
+            set: function (val) {
+              // Proxy the property update.
+              that.ctx[prop] = val;
+              // Update the super canvas.
+              that.scheduleUpdate();
+            },
             get: function() {
               // No need to wrap.
               return that.ctx[prop];
-            }});
+            }
+          });
         })(prop);
       }
     }
@@ -151,14 +127,14 @@ class SuperCanvas extends Rectangle {
           return that.buffer[prop].apply(that.buffer, arguments);
         };
       } else {
-	    Object.defineProperty(this, prop, {
-		  get: function() {
+        Object.defineProperty(this, prop, {
+          get: function() {
             return that.buffer[prop];
           },
           set: function(val) {
             that.buffer[prop] = val;
           }
-		});
+        });
       }
     }
   }
