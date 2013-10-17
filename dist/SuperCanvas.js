@@ -86,10 +86,10 @@ var Wrap2DContext = (function () {
         }
         this.updateScheduled = true;
         var that = this;
-        setTimeout(function () {
+        requestAnimationFrame(function () {
             that.canvas.update();
             that.updateScheduled = false;
-        }, 0);
+        });
     };
     return Wrap2DContext;
 })();
