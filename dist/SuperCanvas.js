@@ -13,33 +13,13 @@ var Point = (function () {
     }
     return Point;
 })();
-
 var Rectangle = (function () {
     function Rectangle(start, end) {
         this.start = start;
         this.end = end;
     }
-    Rectangle.prototype.intersects = function (rect) {
-        // http://stackoverflow.com/a/306332
-        return this.start.x <= rect.end.x && this.end.x >= rect.start.x && this.start.y <= rect.end.y && this.end.y >= rect.start.y;
-    };
-
-    Rectangle.GetIntersectingRects = // A stupid O(n) algorithm for finding intersecting rectangles.
-    // NOTE: If this is too slow, switch to a KD-Tree.
-    function (sourceRect, rects) {
-        var rv = [];
-        for (var i = 0; i < rects.length; i++) {
-            var rect = rects[i];
-            if (sourceRect.intersects(rect)) {
-                rv.push(rect);
-            }
-        }
-        return rv;
-    };
     return Rectangle;
 })();
-
-var buckets = {};
 
 // Wraps a HTMLCanvasElement for the SuperCanvas.
 var CanvasWrap = (function (_super) {
@@ -71,13 +51,10 @@ var Wrap2DContext = (function () {
                 continue;
             }
 
-            buckets[prop] = 0;
-            if (typeof ctx[prop] === 'function') {
-                // Need to create a closure to capture the value of 'prop'.
-                this[prop] = (function (prop) {
-                    return function () {
-                        buckets[prop]++;
-
+            // Create a closure to capture 'prop'.
+            (function (prop) {
+                if (typeof ctx[prop] === 'function') {
+                    that[prop] = function () {
                         // Proxy the function call.
                         var rv = that.ctx[prop].apply(that.ctx, arguments);
 
@@ -85,14 +62,9 @@ var Wrap2DContext = (function () {
                         that.scheduleUpdate();
                         return rv;
                     };
-                })(prop);
-            } else {
-                // Create a closure to capture 'prop'.
-                (function (prop) {
+                } else {
                     Object.defineProperty(that, prop, {
                         set: function (val) {
-                            buckets[prop]++;
-
                             // Proxy the property update.
                             that.ctx[prop] = val;
 
@@ -104,8 +76,8 @@ var Wrap2DContext = (function () {
                             return that.ctx[prop];
                         }
                     });
-                })(prop);
-            }
+                }
+            })(prop);
         }
     }
     Wrap2DContext.prototype.scheduleUpdate = function () {
@@ -159,20 +131,24 @@ var SuperCanvas = (function (_super) {
             if (typeof this[prop] !== 'undefined') {
                 continue;
             }
-            if (typeof this.buffer[prop] === 'function') {
-                this[prop] = function () {
-                    return that.buffer[prop].apply(that.buffer, arguments);
-                };
-            } else {
-                Object.defineProperty(this, prop, {
-                    get: function () {
-                        return that.buffer[prop];
-                    },
-                    set: function (val) {
-                        that.buffer[prop] = val;
-                    }
-                });
-            }
+
+            // Create a closure to capture prop.
+            (function (prop) {
+                if (typeof that.buffer[prop] === 'function') {
+                    that[prop] = function () {
+                        return that.buffer[prop].apply(that.buffer, arguments);
+                    };
+                } else {
+                    Object.defineProperty(that, prop, {
+                        get: function () {
+                            return that.buffer[prop];
+                        },
+                        set: function (val) {
+                            that.buffer[prop] = val;
+                        }
+                    });
+                }
+            })(prop);
         }
     }
     SuperCanvas.prototype.toDataURL = function (type) {

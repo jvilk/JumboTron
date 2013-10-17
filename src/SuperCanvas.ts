@@ -33,20 +33,17 @@ class Wrap2DContext {
         continue;
       }
 
-      if (typeof ctx[prop] === 'function') {
-        // Need to create a closure to capture the value of 'prop'.
-        this[prop] = (function(prop) {
-          return function() {
+      // Create a closure to capture 'prop'.
+      (function(prop) {
+        if (typeof ctx[prop] === 'function') {
+          that[prop] = function() {
             // Proxy the function call.
             var rv = that.ctx[prop].apply(that.ctx, arguments);
             // Update the super canvas.
             that.scheduleUpdate();
             return rv;
-          }
-        })(prop);
-      } else {
-        // Create a closure to capture 'prop'.
-        (function(prop) {
+          };
+        } else {
           Object.defineProperty(that, prop, {
             set: function (val) {
               // Proxy the property update.
@@ -59,8 +56,8 @@ class Wrap2DContext {
               return that.ctx[prop];
             }
           });
-        })(prop);
-      }
+        }
+      })(prop);
     }
   }
 
@@ -122,20 +119,24 @@ class SuperCanvas extends Rectangle {
       if (typeof this[prop] !== 'undefined') {
         continue;
       }
-      if (typeof this.buffer[prop] === 'function') {
-        this[prop] = function() {
-          return that.buffer[prop].apply(that.buffer, arguments);
-        };
-      } else {
-        Object.defineProperty(this, prop, {
-          get: function() {
-            return that.buffer[prop];
-          },
-          set: function(val) {
-            that.buffer[prop] = val;
-          }
-        });
-      }
+
+      // Create a closure to capture prop.
+      (function(prop) {
+        if (typeof that.buffer[prop] === 'function') {
+          that[prop] = function() {
+            return that.buffer[prop].apply(that.buffer, arguments);
+          };
+        } else {
+          Object.defineProperty(that, prop, {
+            get: function() {
+              return that.buffer[prop];
+            },
+            set: function(val) {
+              that.buffer[prop] = val;
+            }
+          });
+        }
+      })(prop);
     }
   }
 
