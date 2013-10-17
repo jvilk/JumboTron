@@ -1,0 +1,55 @@
+<html>
+<head>
+  <title>SuperCanvas</title>
+  <script src="../dist/SuperCanvas.js"></script>
+  <script type="text/javascript">
+    window.onload = function() {
+      var sc = new SuperCanvas(document.getElementsByTagName('canvas'));
+      var imageObj = new Image();
+      imageObj.onload = function() {
+        sc.getContext('2d').drawImage(imageObj, 0, 0);
+      };
+      imageObj.src = 'bigimage.jpg';
+    };
+  </script>
+</head>
+<body>
+  <table bgcolor="black">
+    <tr>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+    </tr>
+    <tr>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+    </tr>
+    <tr>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+    </tr>
+    <tr>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+    </tr>
+    <tr>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+      <td><canvas width="100px" height="100px"></canvas></td>
+    </tr>
+  </table>
+</body>
+</html>
