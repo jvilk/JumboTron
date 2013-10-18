@@ -9,10 +9,6 @@ class Rectangle {
 class CanvasWrap extends Rectangle {
   public canvas: HTMLCanvasElement;
   constructor(canvas: HTMLCanvasElement) {
-    // ASSUMPTION: All canvases are children of <body>, and thus offsetLeft/
-    // offsetTop represents its offset relative to the page.
-    //var start = new Point(canvas.offsetLeft, canvas.offsetTop);
-    //var end = new Point(canvas.offsetLeft + canvas.width, canvas.offsetTop + canvas.height);
     var rect = canvas.getBoundingClientRect();
     var start = new Point(rect.left, rect.top);
     var end = new Point(rect.right, rect.bottom);
