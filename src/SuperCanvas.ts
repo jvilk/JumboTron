@@ -1,3 +1,4 @@
+// Convenience classes.
 class Point {
   constructor(public x:number = 0, public y:number = 0) {}
 }
@@ -17,13 +18,14 @@ class CanvasWrap extends Rectangle {
   }
 }
 
-// Wraps one canvas's context, and proxies updates to all other specified
-// contexts.
+// Wraps the buffer canvas's context. Schedules SuperCanvas updates when it is
+// modified.
 class Wrap2DContext {
   private updateScheduled: boolean = false;
 
   constructor(public ctx: CanvasRenderingContext2D, public canvas: SuperCanvas) {
     var that = this;
+    // Create a proxy stub for every property on the buffer canvas's context.
     for (var prop in ctx) {
       if (typeof this[prop] !== 'undefined') {
         continue;
@@ -57,6 +59,8 @@ class Wrap2DContext {
     }
   }
 
+  // Schedules an update to the SuperCanvas. Ensures that we don't update more
+  // often than necessary.
   public scheduleUpdate() {
     if (this.updateScheduled) {
       return;
@@ -107,10 +111,10 @@ class SuperCanvas extends Rectangle {
     this.ctx = new Wrap2DContext(this.buffer.getContext('2d'), this);
 
     var that = this;
-    // Wrap all of the buffer's functions so it can be used in JavaScript as
-    // a canvas.
+    // Wrap all of the buffer's functions so the SuperCanvas can be used as a
+    // canvas.
     for (var prop in this.buffer) {
-      // Avoid wrapping Object proto BS or things I manually override in
+      // Avoid wrapping Object proto stuff or things I manually override in
       // SuperCanvas.
       if (typeof this[prop] !== 'undefined') {
         continue;
@@ -136,10 +140,8 @@ class SuperCanvas extends Rectangle {
     }
   }
 
-  public toDataURL(type?: string, ...args: any[]): string {
-    return this.buffer.toDataURL(type, args);
-  }
-
+  // Returns the SuperCanvas context -- which is a wrapped version of the
+  // buffer's context.
   public getContext(contextId: "2d"): CanvasRenderingContext2D;
   public getContext(contextId: string, ...args: any[]): any;
   public getContext(contextId: any, ...args: any[]) {
@@ -153,19 +155,19 @@ class SuperCanvas extends Rectangle {
   // Updates all of the individual canvases that comprise the SuperCanvas.
   // Should only be called by Wrap2DContext.
   public update() {
-    // XXX: Might have to yield to the browser here.
     for (var i = 0; i < this.canvases.length; i++) {
       var wc = this.canvases[i];
       var ctx = wc.canvas.getContext('2d');
+      // Determine the X and Y coordinate of the image data in the buffer canvas
+      // that we need to copy into this particular canvas.
       var offsetX = wc.start.x - this.start.x;
       var offsetY = wc.start.y - this.start.y;
-      // Translate the coordinates to ones local to this particular canvas.
+      // Unfortunately, any time the buffer is cleared, it merely introduces
+      // transparent pixels which, when applied to this canvas, do not remove
+      // anything that's already on it. So we must explicitly clear the canvas
+      // for every update.
       ctx.clearRect(0, 0, wc.canvas.width, wc.canvas.height);
       ctx.drawImage(this.buffer, offsetX, offsetY, wc.canvas.width, wc.canvas.height, 0, 0, wc.canvas.width, wc.canvas.height);
     }
-  }
-
-  public msToBlob(): Blob {
-    return this.buffer.msToBlob();
   }
 }

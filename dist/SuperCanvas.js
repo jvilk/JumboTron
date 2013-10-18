@@ -4,6 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+// Convenience classes.
 var Point = (function () {
     function Point(x, y) {
         if (typeof x === "undefined") { x = 0; }
@@ -25,10 +26,6 @@ var Rectangle = (function () {
 var CanvasWrap = (function (_super) {
     __extends(CanvasWrap, _super);
     function CanvasWrap(canvas) {
-        // ASSUMPTION: All canvases are children of <body>, and thus offsetLeft/
-        // offsetTop represents its offset relative to the page.
-        //var start = new Point(canvas.offsetLeft, canvas.offsetTop);
-        //var end = new Point(canvas.offsetLeft + canvas.width, canvas.offsetTop + canvas.height);
         var rect = canvas.getBoundingClientRect();
         var start = new Point(rect.left, rect.top);
         var end = new Point(rect.right, rect.bottom);
@@ -38,14 +35,15 @@ var CanvasWrap = (function (_super) {
     return CanvasWrap;
 })(Rectangle);
 
-// Wraps one canvas's context, and proxies updates to all other specified
-// contexts.
+// Wraps the buffer canvas's context. Schedules SuperCanvas updates when it is
+// modified.
 var Wrap2DContext = (function () {
     function Wrap2DContext(ctx, canvas) {
         this.ctx = ctx;
         this.canvas = canvas;
         this.updateScheduled = false;
         var that = this;
+
         for (var prop in ctx) {
             if (typeof this[prop] !== 'undefined') {
                 continue;
@@ -80,6 +78,8 @@ var Wrap2DContext = (function () {
             })(prop);
         }
     }
+    // Schedules an update to the SuperCanvas. Ensures that we don't update more
+    // often than necessary.
     Wrap2DContext.prototype.scheduleUpdate = function () {
         if (this.updateScheduled) {
             return;
@@ -151,14 +151,6 @@ var SuperCanvas = (function (_super) {
             })(prop);
         }
     }
-    SuperCanvas.prototype.toDataURL = function (type) {
-        var args = [];
-        for (var _i = 0; _i < (arguments.length - 1); _i++) {
-            args[_i] = arguments[_i + 1];
-        }
-        return this.buffer.toDataURL(type, args);
-    };
-
     SuperCanvas.prototype.getContext = function (contextId) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 1); _i++) {
@@ -178,17 +170,19 @@ var SuperCanvas = (function (_super) {
         for (var i = 0; i < this.canvases.length; i++) {
             var wc = this.canvases[i];
             var ctx = wc.canvas.getContext('2d');
+
+            // Determine the X and Y coordinate of the image data in the buffer canvas
+            // that we need to copy into this particular canvas.
             var offsetX = wc.start.x - this.start.x;
             var offsetY = wc.start.y - this.start.y;
 
-            // Translate the coordinates to ones local to this particular canvas.
+            // Unfortunately, any time the buffer is cleared, it merely introduces
+            // transparent pixels which, when applied to this canvas, do not remove
+            // anything that's already on it. So we must explicitly clear the canvas
+            // for every update.
             ctx.clearRect(0, 0, wc.canvas.width, wc.canvas.height);
             ctx.drawImage(this.buffer, offsetX, offsetY, wc.canvas.width, wc.canvas.height, 0, 0, wc.canvas.width, wc.canvas.height);
         }
-    };
-
-    SuperCanvas.prototype.msToBlob = function () {
-        return this.buffer.msToBlob();
     };
     return SuperCanvas;
 })(Rectangle);
