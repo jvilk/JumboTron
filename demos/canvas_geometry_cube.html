@@ -12,7 +12,7 @@
 				overflow: hidden;
 			}
 		</style>
-		<script src="../dist/SuperCanvas.js"></script>
+		<script src="../dist/JumboTron.js"></script>
 	</head>
 	<body>
 
@@ -77,7 +77,7 @@
 				plane = new THREE.Mesh( geometry, material );
 				scene.add( plane );
 
-				renderer = new THREE.CanvasRenderer({canvas: new SuperCanvas(document.getElementsByTagName('canvas'))});
+				renderer = new THREE.CanvasRenderer({canvas: new JumboTron(document.getElementsByTagName('canvas'))});
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 				stats = new Stats();

@@ -1,10 +1,10 @@
 <html>
 <head>
   <title>SuperCanvas</title>
-  <script src="../dist/SuperCanvas.js"></script>
+  <script src="../dist/JumboTron.js"></script>
   <script type="text/javascript">
     window.onload = function() {
-      var sc = new SuperCanvas(document.getElementsByTagName('canvas'));
+      var sc = new JumboTron(document.getElementsByTagName('canvas'));
       var imageObj = new Image();
       imageObj.onload = function() {
         sc.getContext('2d').drawImage(imageObj, 0, 0);
