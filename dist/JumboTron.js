@@ -22,7 +22,7 @@ var Rectangle = (function () {
     return Rectangle;
 })();
 
-// Wraps a HTMLCanvasElement for the SuperCanvas.
+// Wraps a HTMLCanvasElement for the JumboTron.
 var CanvasWrap = (function (_super) {
     __extends(CanvasWrap, _super);
     function CanvasWrap(canvas) {
@@ -35,7 +35,7 @@ var CanvasWrap = (function (_super) {
     return CanvasWrap;
 })(Rectangle);
 
-// Wraps the buffer canvas's context. Schedules SuperCanvas updates when it is
+// Wraps the buffer canvas's context. Schedules JumboTron updates when it is
 // modified.
 var Wrap2DContext = (function () {
     function Wrap2DContext(ctx, canvas) {
@@ -78,7 +78,7 @@ var Wrap2DContext = (function () {
             })(prop);
         }
     }
-    // Schedules an update to the SuperCanvas. Ensures that we don't update more
+    // Schedules an update to the JumboTron. Ensures that we don't update more
     // often than necessary.
     Wrap2DContext.prototype.scheduleUpdate = function () {
         if (this.updateScheduled) {
@@ -94,9 +94,9 @@ var Wrap2DContext = (function () {
     return Wrap2DContext;
 })();
 
-var SuperCanvas = (function (_super) {
-    __extends(SuperCanvas, _super);
-    function SuperCanvas(canvases) {
+var JumboTron = (function (_super) {
+    __extends(JumboTron, _super);
+    function JumboTron(canvases) {
         _super.call(this, new Point(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY), new Point(0, 0));
         this.canvases = [];
 
@@ -151,7 +151,7 @@ var SuperCanvas = (function (_super) {
             })(prop);
         }
     }
-    SuperCanvas.prototype.getContext = function (contextId) {
+    JumboTron.prototype.getContext = function (contextId) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 1); _i++) {
             args[_i] = arguments[_i + 1];
@@ -164,9 +164,9 @@ var SuperCanvas = (function (_super) {
         return this.ctx;
     };
 
-    // Updates all of the individual canvases that comprise the SuperCanvas.
+    // Updates all of the individual canvases that comprise the JumboTron.
     // Should only be called by Wrap2DContext.
-    SuperCanvas.prototype.update = function () {
+    JumboTron.prototype.update = function () {
         for (var i = 0; i < this.canvases.length; i++) {
             var wc = this.canvases[i];
             var ctx = wc.canvas.getContext('2d');
@@ -184,5 +184,5 @@ var SuperCanvas = (function (_super) {
             ctx.drawImage(this.buffer, offsetX, offsetY, wc.canvas.width, wc.canvas.height, 0, 0, wc.canvas.width, wc.canvas.height);
         }
     };
-    return SuperCanvas;
+    return JumboTron;
 })(Rectangle);

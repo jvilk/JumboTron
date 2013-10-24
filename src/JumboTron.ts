@@ -6,7 +6,7 @@ class Rectangle {
   constructor(public start: Point, public end: Point){}
 }
 
-// Wraps a HTMLCanvasElement for the SuperCanvas.
+// Wraps a HTMLCanvasElement for the JumboTron.
 class CanvasWrap extends Rectangle {
   public canvas: HTMLCanvasElement;
   constructor(canvas: HTMLCanvasElement) {
@@ -18,12 +18,12 @@ class CanvasWrap extends Rectangle {
   }
 }
 
-// Wraps the buffer canvas's context. Schedules SuperCanvas updates when it is
+// Wraps the buffer canvas's context. Schedules JumboTron updates when it is
 // modified.
 class Wrap2DContext {
   private updateScheduled: boolean = false;
 
-  constructor(public ctx: CanvasRenderingContext2D, public canvas: SuperCanvas) {
+  constructor(public ctx: CanvasRenderingContext2D, public canvas: JumboTron) {
     var that = this;
     // Create a proxy stub for every property on the buffer canvas's context.
     for (var prop in ctx) {
@@ -59,7 +59,7 @@ class Wrap2DContext {
     }
   }
 
-  // Schedules an update to the SuperCanvas. Ensures that we don't update more
+  // Schedules an update to the JumboTron. Ensures that we don't update more
   // often than necessary.
   public scheduleUpdate() {
     if (this.updateScheduled) {
@@ -74,7 +74,7 @@ class Wrap2DContext {
   }
 }
 
-class SuperCanvas extends Rectangle {
+class JumboTron extends Rectangle {
   private canvases:CanvasWrap[] = [];
   private buffer:HTMLCanvasElement;
   private ctx:Wrap2DContext;
@@ -111,11 +111,11 @@ class SuperCanvas extends Rectangle {
     this.ctx = new Wrap2DContext(this.buffer.getContext('2d'), this);
 
     var that = this;
-    // Wrap all of the buffer's functions so the SuperCanvas can be used as a
+    // Wrap all of the buffer's functions so the JumboTron can be used as a
     // canvas.
     for (var prop in this.buffer) {
       // Avoid wrapping Object proto stuff or things I manually override in
-      // SuperCanvas.
+      // JumboTron.
       if (typeof this[prop] !== 'undefined') {
         continue;
       }
@@ -140,7 +140,7 @@ class SuperCanvas extends Rectangle {
     }
   }
 
-  // Returns the SuperCanvas context -- which is a wrapped version of the
+  // Returns the JumboTron context -- which is a wrapped version of the
   // buffer's context.
   public getContext(contextId: "2d"): CanvasRenderingContext2D;
   public getContext(contextId: string, ...args: any[]): any;
@@ -152,7 +152,7 @@ class SuperCanvas extends Rectangle {
     return this.ctx;
   }
 
-  // Updates all of the individual canvases that comprise the SuperCanvas.
+  // Updates all of the individual canvases that comprise the JumboTron.
   // Should only be called by Wrap2DContext.
   public update() {
     for (var i = 0; i < this.canvases.length; i++) {
