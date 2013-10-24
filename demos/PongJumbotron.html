@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script type="text/javascript" src="../dist/JumboTron.js"></script>
+        <script type="text/javascript" src="Pong.js"></script>
+        <script type="text/javascript">
+        window.onload = function() {
+            // Initialize our game instance
+            var game = new Game(new JumboTron(document.getElementsByTagName("canvas")));
+            // Start the game execution
+            MainLoop(game);
+        };
+        </script>
+        <title>Pong</title>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td><canvas style="background-color: #353535;" width="170" height="256"></canvas></td>
+                <td width="172px"></td>
+                <td><canvas style="background-color: #353535;" width="170" height="256"></canvas></td>
+            </tr>
+        </table>
+    </body>
+</html>
