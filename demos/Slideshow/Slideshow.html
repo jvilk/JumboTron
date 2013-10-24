@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <script type="text/javascript" src="Slideshow.js"></script>
+    <script type="text/javascript">
+      window.onload = function() {
+        var slideInfo = [
+          {
+            url: 'wall1.jpg',
+            entrance: {
+              type: 'blinds'
+            }
+          }
+        ];
+        var cvs = document.getElementsByTagName('canvas')[0];
+        var ss = new Slideshow(cvs, slideInfo, function() {
+          ss.pauseToggle();
+        });
+      };
+    </script>
+    <title>Slideshow Demo</title>
+  </head>
+  <body>
+    <canvas width="1920px" height="1080px"></canvas>
+  </body>
+</html>
