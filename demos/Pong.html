@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script type="text/javascript" src="Pong.js"></script>
+        <script type="text/javascript">
+        window.onload = function() {
+            // Initialize our game instance
+            var game = new Game(document.getElementById("game"));
+            // Start the game execution
+            MainLoop(game);
+        };
+        </script>
+        <title>Pong</title>
+    </head>
+    <body>
+        <canvas id="game" style="background-color: #353535;" width="512" height="256"></canvas>
+    </body>
+</html>

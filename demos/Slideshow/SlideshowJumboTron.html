@@ -1,0 +1,62 @@
+<html>
+  <head>
+    <script type="text/javascript" src="../../dist/JumboTron.js"></script>
+    <script type="text/javascript" src="Slideshow.js"></script>
+    <script type="text/javascript">
+      window.onload = function() {
+        var slideInfo = [
+          {
+            url: 'wall1.jpg',
+            entrance: {
+              type: 'blinds'
+            }
+          }
+        ];
+        var cvs = new JumboTron(document.getElementsByTagName('canvas'));
+        var ss = new Slideshow(cvs, slideInfo, function() {
+          ss.pauseToggle();
+        });
+      };
+    </script>
+    <title>Slideshow Demo</title>
+  </head>
+  <body>
+    <table bgcolor="black">
+    <tr>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+    </tr>
+    <tr>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+    </tr>
+    <tr>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+    </tr>
+    <tr>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+    </tr>
+    <tr>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+      <td><canvas width="384px" height="216px"></canvas></td>
+    </tr>
+  </table>
+  </body>
+</html>
