@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Canvas Benchmark</title>
+    <script type="text/javascript" src="CanvasBenchmark.js"></script>
+    <script type="text/javascript">
+      var id = 0;
+      function insertCanvases(num) {
+        for (var i = 0; i < num; i++) {
+          document.body.innerHTML += "<canvas id=\"c"+(id++)+"\" width=\"192px\" height=\"108px\"></canvas>";
+          if (id%10 === 0) {
+            document.body.innerHTML += "<br />";
+          }
+        }
+      }
+      window.addEventListener('load', function() {
+        insertCanvases(3);
+        CanvasBenchmark.AutoTest('3 Canvases', function() {
+          insertCanvases(3);
+          CanvasBenchmark.AutoTest('6 Canvases', function() {
+            insertCanvases(6);
+            CanvasBenchmark.AutoTest('12 Canvases', function() {
+              insertCanvases(13);
+              CanvasBenchmark.AutoTest('25 Canvases', function() {
+                insertCanvases(25);
+                CanvasBenchmark.AutoTest('50 Canvases', function() {
+                  insertCanvases(50);
+                  CanvasBenchmark.AutoTest('100 Canvases');
+                });
+              });
+            });
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

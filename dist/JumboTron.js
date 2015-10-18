@@ -29,6 +29,13 @@ var CanvasWrap = (function (_super) {
         var rect = canvas.getBoundingClientRect();
         var start = new Point(rect.left, rect.top);
         var end = new Point(rect.right, rect.bottom);
+        if (canvas.getAttribute('scale')) {
+            // Convert to number.
+            var scale = parseInt(canvas.getAttribute('scale'));
+
+            // Pretend it's smaller.
+            end = new Point(Math.round((rect.right - rect.left) / scale) + rect.left, Math.round((rect.bottom - rect.top) / scale) + rect.top);
+        }
         _super.call(this, start, end);
         this.canvas = canvas;
     }
@@ -86,10 +93,10 @@ var Wrap2DContext = (function () {
         }
         this.updateScheduled = true;
         var that = this;
-        requestAnimationFrame(function () {
+        setTimeout(function () {
             that.canvas.update();
             that.updateScheduled = false;
-        });
+        }, 0);
     };
     return Wrap2DContext;
 })();
@@ -181,7 +188,18 @@ var JumboTron = (function (_super) {
             // anything that's already on it. So we must explicitly clear the canvas
             // for every update.
             ctx.clearRect(0, 0, wc.canvas.width, wc.canvas.height);
-            ctx.drawImage(this.buffer, offsetX, offsetY, wc.canvas.width, wc.canvas.height, 0, 0, wc.canvas.width, wc.canvas.height);
+
+            // Check if we're scaling up.
+            var width = wc.canvas.width;
+            var height = wc.canvas.height;
+            var scaleStr = this.canvases[i].canvas.getAttribute('scale');
+            if (scaleStr) {
+                // String -> Number
+                var scale = parseInt(scaleStr);
+                width = Math.round(width / scale);
+                height = Math.round(height / scale);
+            }
+            ctx.drawImage(this.buffer, offsetX, offsetY, width, height, 0, 0, wc.canvas.width, wc.canvas.height);
         }
     };
     return JumboTron;
